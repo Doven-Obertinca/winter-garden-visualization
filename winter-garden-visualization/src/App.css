@@ -1,0 +1,23 @@
+.layout {
+  background-color: #f0f0f0;
+  padding: 20px;
+}
+
+.resizable-image {
+  border: 1px solid #ddd;
+  overflow: hidden;
+  position: relative;
+}
+
+.input-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding: 10px;
+}
+
+.selected-file {
+  margin-top: 10px;
+  font-size: 14px;
+}
