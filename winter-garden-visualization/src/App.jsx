@@ -1,5 +1,6 @@
-import { useState } from 'react';
-import ResizableAndDraggableImage from './ResizableAndDraggableImage';
+import { useState } from "react";
+import ResizableAndDraggableImage from "./ResizableAndDraggableImage";
+// import DesignCreator from './DesignCreator';
 
 const App = () => {
   const [selectedImage, setSelectedImage] = useState(null);
@@ -23,6 +24,16 @@ const App = () => {
     setImages(newImages);
   };
 
+  const handleResize = (index, event, { size }) => {
+    // Handle resize logic
+    console.log(`Resized image at index ${index}:`, size);
+  };
+
+  const handleDrag = (index, event, { deltaX, deltaY }) => {
+    // Handle drag logic
+    console.log(`Dragged image at index ${index}:`, deltaX, deltaY);
+  };
+
   return (
     <div>
       <input type="file" onChange={handleFileChange} />
@@ -31,18 +42,17 @@ const App = () => {
       {images.map((image, index) => (
         <ResizableAndDraggableImage
           key={index}
+          index={index}
           image={image}
-          onResize={(event, { size }) => {
-            // Handle resize logic
-            console.log('Resized:', size);
-          }}
-          onDrag={(event, { deltaX, deltaY }) => {
-            // Handle drag logic
-            console.log('Dragged:', deltaX, deltaY);
-          }}
+          onResize={(event, { size }) => handleResize(index, event, { size })}
+          onDrag={(event, { deltaX, deltaY }) =>
+            handleDrag(index, event, { deltaX, deltaY })
+          }
           onDelete={() => handleImageDelete(index)}
+          isHousePhoto={true}
         />
       ))}
+      {/* <DesignCreator /> */}
     </div>
   );
 };

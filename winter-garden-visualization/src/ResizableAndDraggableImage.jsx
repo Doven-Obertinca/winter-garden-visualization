@@ -1,49 +1,54 @@
-import { useState, useRef } from 'react';
-import PropTypes from 'prop-types';
-import { ResizableBox } from 'react-resizable';
-import { DraggableCore } from 'react-draggable';
+import { useRef } from "react";
+import { ResizableBox } from "react-resizable";
+import { DraggableCore } from "react-draggable";
+import PropTypes from "prop-types";
+import "./ResizableImage.css";
 
-const ResizableAndDraggableImage = ({ image, onResize, onDrag, onDelete }) => {
-  const [position, setPosition] = useState({ x: 0, y: 0 });
-  const resizableBoxRef = useRef(null);
+const ResizableAndDraggableImage = ({
+  image,
+  onResize,
+  onDrag,
+  onDelete,
+  isHousePhoto,
+}) => {
+  const imageRef = useRef();
 
-  const handleDrag = (e, ui) => {
-    const { x, y } = ui;
-    setPosition({ x, y });
-    onDrag(e, ui);
+  const handleResize = (event, { size }) => {
+    if (onResize) {
+      onResize(event, { size });
+    }
   };
 
-  const handleResize = (e, { size }) => {
-    onResize(e, { size });
-  };
-
-  const handleDelete = () => {
-    onDelete();
+  const handleDrag = (event, { deltaX, deltaY }) => {
+    if (onDrag) {
+      onDrag(event, { deltaX, deltaY });
+    }
   };
 
   return (
-    <DraggableCore bounds="parent" onDrag={handleDrag}>
+    <DraggableCore onDrag={handleDrag}>
       <ResizableBox
-        width={200}
+        width={isHousePhoto ? 400 : 200} // Set width based on whether it's a house photo or door photo
         height={200}
-        handle={<span>Resize</span>}
-        axis="both"
         onResize={handleResize}
-        ref={resizableBoxRef}
-        style={{
-          position: 'absolute',
-          transform: `translate(${position.x}px, ${position.y}px)`,
-          border: '1px solid #ddd',
-          overflow: 'hidden',
-        }}
+        handle={<i style={{ cursor: "grab" }}>Resize Here</i>}
+        draggableOpts={{ grid: [1, 1] }} // Add this line to enable dragging with precision
       >
-        <div>
+        <div style={{ position: "relative", width: "100%", height: "100%" }}>
           <img
-            src={image && URL.createObjectURL(image)}
-            alt="Resizable and Draggable"
-            style={{ width: '100%', height: '100%' }}
+            ref={imageRef}
+            src={URL.createObjectURL(image)}
+            alt="Resizer"
+            style={{ width: "100%", height: "100%", objectFit: "contain" }}
           />
-          <button onClick={handleDelete} style={{ position: 'absolute', top: 0, right: 0 }}>
+          <button
+            onClick={onDelete}
+            style={{
+              position: "absolute",
+              top: 0,
+              right: 0,
+              cursor: "pointer",
+            }}>
             Delete
           </button>
         </div>
@@ -53,10 +58,11 @@ const ResizableAndDraggableImage = ({ image, onResize, onDrag, onDelete }) => {
 };
 
 ResizableAndDraggableImage.propTypes = {
-  image: PropTypes.instanceOf(File),
+  image: PropTypes.object.isRequired,
   onResize: PropTypes.func,
   onDrag: PropTypes.func,
   onDelete: PropTypes.func,
+  isHousePhoto: PropTypes.bool.isRequired,
 };
 
 export default ResizableAndDraggableImage;
